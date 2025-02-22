@@ -1,9 +1,10 @@
 # 🚗 mGarage 2.0.0 - Custom Fork - fakeplate
 
 ## 🌍 English Version
-
+# ESX 1.12.2+ version
 This fork modifies the fake plate method by setting it to an empty plate. Additionally, it allows transferring the plate to another vehicle while keeping the trunk and other properties of the original vehicle. This fork is optimized for CZ/SK servers.
 
+# How to use - is not ready yet, because i need found what i changed in ESX. 
 ---
 
 ## 🔧 How to Use?

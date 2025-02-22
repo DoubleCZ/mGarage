@@ -61,7 +61,10 @@ This fork modifies the fake plate method by setting it to an empty plate. Additi
  ![Discord](https://img.shields.io/discord/1048630711881568267?style=flat&label=Online%20Users)
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FMono-94%2FmGarage&count_bg=%23E9A711&title_bg=%23232323&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 # 
+# [Documents](https://mono-94.github.io/mDocuments/docs/mGarage) 
 
+
+![image](https://i.imgur.com/Y9RXYBH.png)
 ---
 
 ## 🇨🇿 Česká verze
@@ -125,7 +128,10 @@ Tento fork upravuje metodu falešných SPZ tak, že nastaví prázdnou SPZ. Nav�
  ![Discord](https://img.shields.io/discord/1048630711881568267?style=flat&label=Online%20Users)
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FMono-94%2FmGarage&count_bg=%23E9A711&title_bg=%23232323&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 # 
+# [Documents](https://mono-94.github.io/mDocuments/docs/mGarage) 
 
+
+![image](https://i.imgur.com/Y9RXYBH.png)
 
 ---
 

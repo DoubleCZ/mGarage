@@ -111,6 +111,7 @@ function SaveCar(data)
         local trailer = data
         trailer.props = json.encode(lib.getVehicleProperties(trailerEntity))
         trailer.vehmodel = GetDisplayNameFromVehicleModel(GetEntityModel(trailerEntity))
+        trailer.realplate = exports['mVehicle']:GetVehicleRealPlate(data.entity)
         trailer.entity = VehToNet(trailerEntity)
         trailer.seats = GetVehicleMaxNumberOfPassengers(data.entity)
         ServerCallBack('saveCar', trailer, 0)
@@ -119,6 +120,7 @@ function SaveCar(data)
 
     data.props = json.encode(lib.getVehicleProperties(data.entity))
     data.vehmodel = GetDisplayNameFromVehicleModel(GetEntityModel(data.entity))
+    data.realplate = exports['mVehicle']:GetVehicleRealPlate(data.entity)
     data.entity = VehToNet(data.entity)
     data.seats = GetVehicleMaxNumberOfPassengers(data.entity)
 
@@ -136,15 +138,16 @@ end
 RegisterNUICallback('mGarage:PlyInteract', function(data, cb)
     local retval = nil
     if data.action == 'setBlip' then
+        --print(json.encode(data, {indent = true}))
         local marked = Vehicles.BlipOwnerCar(data.data.plate)
         cb(marked)
         return
     end
 
     retval = ServerCallBack(data.action, data.data)
-print(retval)
+    --print(retval)
     if data.action == 'keys' then
-        Vehicles.VehicleKeysMenu(data.plate, function()
+        Vehicles.VehicleKeysMenu(data.realplate, function()
             OpenGarage(lastData)
         end)
     end

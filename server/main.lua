@@ -50,9 +50,7 @@ lib.callback.register('mGarage:Interact', function(source, action, data, vehicle
         Vehicles.SpawnVehicleId({ id = data.vehicleid, coords = coords, source = source, intocar = data.garage.intocar },
             function(vehicleData, Vehicle)
                 if vehicleData and Vehicle then
-                    if Vehicles.Config.ItemKeys then
-                        Vehicles.ItemCarKeys(source, 'add', vehicleData.metadata.fakeplate or vehicleData.plate)
-                    end
+                    Vehicles.ItemCarKeys(source, 'add', vehicleData.plate)
                     Vehicle.RetryVehicle()
                     retval = true
                 else
@@ -77,7 +75,7 @@ lib.callback.register('mGarage:Interact', function(source, action, data, vehicle
 
             if metadata.customGarage then
                 if Vehicles.Config.ItemKeys then
-                    Vehicles.ItemCarKeys(source, 'delete', Vehicle.plate)
+                    Vehicles.ItemCarKeys(source, 'delete', data.realplate)
                 end
 
                 return Vehicle.DeleteVehicle(false)
@@ -97,9 +95,7 @@ lib.callback.register('mGarage:Interact', function(source, action, data, vehicle
 
                 if left then Citizen.Wait(1000) end
 
-                if Vehicles.Config.ItemKeys then
-                    Vehicles.ItemCarKeys(source, 'delete', metadata.fakeplate or Vehicle.plate)
-                end
+                Vehicles.ItemCarKeys(source, 'delete', data.realplate)
 
                 Vehicle.StoreVehicle(data.name, data.props)
 
@@ -113,7 +109,7 @@ lib.callback.register('mGarage:Interact', function(source, action, data, vehicle
                 return false
             end
         else
-            data.plate = GetVehicleNumberPlateText(entity)
+            data.plate = exports['mVehicle']:GetVehicleRealPlate(entity)
 
             local row = MySQL.single.await(Querys.queryStore1, { data.plate })
 
@@ -173,7 +169,7 @@ lib.callback.register('mGarage:Interact', function(source, action, data, vehicle
             Vehicle.ImpoundVehicle(data.garage, infoimpound.price, infoimpound.reason, infoimpound.impoundDate,
                 infoimpound.endPound)
         else
-            local plate = GetVehicleNumberPlateText(entity)
+            local plate = exports['mVehicle']:GetVehicleRealPlate(entity)
             local row = Vehicles.GetVehicleByPlate(plate, true)
 
             if row then
@@ -238,7 +234,7 @@ lib.callback.register('mGarage:Interact', function(source, action, data, vehicle
 
                     Vehicles.CreateVehicle(ImpVeh, function(VehData, Vehicle)
                         if Vehicles.Config.ItemKeys then
-                            Vehicles.ItemCarKeys(source, 'add', VehData.metadata.fakeplate or VehData.plate)
+                            Vehicles.ItemCarKeys(source, 'add', VehData.realplate)
                         end
 
                         Vehicle.RetryImpound(data.garage.defaultGarage)
@@ -327,9 +323,11 @@ lib.callback.register('mGarage:Interact', function(source, action, data, vehicle
             coords   = coords,
             metadata = { customGarage = data.garage.name },
         }, function(VehicleData, Vehicle)
-            if Vehicles.Config.ItemKeys then
-                Vehicles.ItemCarKeys(source, 'add', VehicleData.plate)
+            local keyPlate = data.vehicle.plate
+            if data.vehicle.realplate then
+                keyPlate = data.vehicle.realplate
             end
+            Vehicles.ItemCarKeys(source, 'add', keyPlate)
         end)
 
         return true
@@ -348,7 +346,11 @@ lib.callback.register('mGarage:Interact', function(source, action, data, vehicle
                 Vehicle.DeleteVehicle(false)
 
                 if Vehicles.Config.ItemKeys then
-                    Vehicles.ItemCarKeys(source, 'delete', Vehicle.plate)
+                    local keyPlate = data.vehicle.plate
+                    if data.vehicle.realplate then
+                        keyPlate = data.vehicle.realplate
+                    end
+                    Vehicles.ItemCarKeys(source, 'delete', keyPlate)
                 end
 
                 retval = true
@@ -401,14 +403,22 @@ lib.callback.register('mGarage:Interact', function(source, action, data, vehicle
             retval = false
         end
     elseif action == 'changeName' then
-        local Vehicle = Vehicles.GetVehicleByPlate(data.vehicle.plate)
+        local keyPlate = data.vehicle.plate
+        if data.vehicle.realplate then
+            keyPlate = data.vehicle.realplate
+        end
+        local Vehicle = Vehicles.GetVehicleByPlate(keyPlate)
 
         if Vehicle then
             Vehicle.setName(data.newName)
             retval = true
         else
+            local keyPlate = data.vehicle.plate
+            if data.vehicle.realplate then
+                keyPlate = data.vehicle.realplate
+            end
             local row = MySQL.single.await('SELECT `metadata` FROM `owned_vehicles` WHERE `plate` = ? LIMIT 1', {
-                data.vehicle.plate
+                keyPlate
             })
             if row then
                 local metadata = json.decode(row.metadata)
@@ -419,7 +429,7 @@ lib.callback.register('mGarage:Interact', function(source, action, data, vehicle
                     metadata.vehname = data.newName
                     local updatedMetadata = json.encode(metadata)
                     MySQL.update('UPDATE `owned_vehicles` SET `metadata` = ? WHERE `plate` = ?',
-                        { updatedMetadata, data.vehicle.plate })
+                        { updatedMetadata, keyPlate })
                     retval = true
                 else
                     retval = false
@@ -429,13 +439,17 @@ lib.callback.register('mGarage:Interact', function(source, action, data, vehicle
             end
         end
     elseif action == 'cleanName' then
-        local Vehicle = Vehicles.GetVehicleByPlate(data.vehicle.plate)
+        local keyPlate = data.vehicle.plate
+        if data.vehicle.realplate then
+            keyPlate = data.vehicle.realplate
+        end
+        local Vehicle = Vehicles.GetVehicleByPlate(keyPlate)
 
         if Vehicle then
             vehicle.DeleteMetadata('vehname')
             retval = true
         else
-            local row = Vehicles.GetVehicleByPlate(data.vehicle.plate, true)
+            local row = Vehicles.GetVehicleByPlate(keyPlate, true)
 
             if row then
                 local metadata = json.decode(row.metadata)
@@ -444,7 +458,7 @@ lib.callback.register('mGarage:Interact', function(source, action, data, vehicle
                     metadata.vehname = nil
                     local updatedMetadata = json.encode(metadata)
                     MySQL.update('UPDATE `owned_vehicles` SET `metadata` = ? WHERE `plate` = ?',
-                        { updatedMetadata, data.vehicle.plate })
+                        { updatedMetadata, keyPlate })
                     retval = true
                 else
                     retval = false
@@ -467,7 +481,7 @@ AddEventHandler('entityRemoved', function(entity)
             if Vehicles.save() then return end
 
             local impound = GetDefaultImpound(GetVehicleType(entity))
-            local plate = GetVehicleNumberPlateText(entity)
+            local plate = exports['mVehicle']:GetVehicleRealPlate(entity)
             local vehicle = Vehicles.GetVehicleByPlate(plate, true)
 
             if vehicle and vehicle.stored == 0 and not vehicle.pound then

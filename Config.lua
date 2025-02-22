@@ -15,24 +15,26 @@ Config.TargetDistance = 10.0
 
 Config.BlipDefault          = {
     sprite = 50,
-    color = 0,
-    size = 0.5,
-    stackBlips = false,
-    impound = 'Impound', 
-    garage = 'Garage',
+    color = 1,
+    size = 0.7,
+    stackBlips = true,
+    impound = 'Odtahovka', 
+    garage = 'Garaz',
     custom = 'Garage',
-    rent = 'Rent a Car',
+    rent = 'Pronajmi si auto',
 }
 
 Config.PedAnims             = {
     anims = true,
-    list = { "WORLD_HUMAN_AA_SMOKE", "WORLD_HUMAN_AA_COFFEE", "WORLD_HUMAN_CLIPBOARD", "WORLD_HUMAN_MUSICIAN", "WORLD_HUMAN_STUPOR" }
+    list = { "WORLD_HUMAN_AA_SMOKE", "WORLD_HUMAN_AA_COFFEE", "WORLD_HUMAN_CLIPBOARD" }
 }
 
 -- ox Target Based job and grade min grade
 Config.TargetImpound        = {
     -- job     -- min grade
     ['police'] = 0,
+    ['gruppe6'] = 0,
+    ['gov'] = 0,
 
 }
 ----------------------------------------------------------------------
@@ -41,11 +43,11 @@ Config.ImpoundVehicledelete = true
 
 -- Default impounds names
 Config.DefaultImpound       = {
-    car = 'Impound Car',
-    air = 'Impound Air',
-    boat = 'Impound Boat',
-    price = 50,
-    note = 'Vehicle seized by the municipal service'
+    car = 'Odtahovka',
+    air = 'Air Odtahovka',
+    boat = 'Boat Odtahovka',
+    price = 250,
+    note = 'Vaše vozidlo bylo odbaveno.'
 }
 
 
@@ -57,7 +59,7 @@ Config.Notify = function(data)
         position = data.position or 'bottom-right',
         type = data.type or 'warning',
         icon = data.icon or 'car',
-        duration = data.duration or 3000,
+        duration = data.duration or 3500,
         showDuration = true,
     })
 end
